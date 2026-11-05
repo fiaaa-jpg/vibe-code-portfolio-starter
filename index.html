@@ -1,136 +1,674 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sofia Nabilah | ICT Portfolio</title>
+  <meta name="description" content="Portfolio of Sofia Nabilah, an ICT student interested in frontend development, data analytics, and fintech.">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    /* EDIT THEME COLORS HERE */
+    :root {
+      --cyan: #67e8f9;
+      --magenta: #d946ef;
+      --background: #070914;
+      --panel: rgba(13, 18, 36, 0.72);
+      --panel-border: rgba(103, 232, 249, 0.18);
+      --text: #edf7ff;
+      --muted: #9babc0;
+      --card-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      --mono: "Courier New", monospace;
+      --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
 
-  <!-- TODO: Change the title and description to your own -->
-  <title>Your Name | Portfolio</title>
-  <meta name="description" content="Personal portfolio of Your Name — student, builder, problem solver." />
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(103, 232, 249, 0.09), transparent 24rem),
+        radial-gradient(circle at 85% 35%, rgba(217, 70, 239, 0.07), transparent 28rem),
+        var(--background);
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
 
-  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/style.css" />
+    .site-header {
+      position: fixed;
+      z-index: 20;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      background: rgba(7, 9, 20, 0.74);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .nav {
+      width: min(1180px, calc(100% - 40px));
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-brand span { color: var(--cyan); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: color 180ms ease;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+
+    .robot-canvas {
+      position: fixed;
+      z-index: 5;
+      inset: 72px 0 0 0;
+      pointer-events: auto;
+    }
+    .robot-canvas canvas { width: 100%; height: 100%; display: block; }
+
+    .robot-controls {
+      position: fixed;
+      z-index: 12;
+      right: max(24px, calc((100vw - 1180px) / 2));
+      bottom: 24px;
+      display: flex;
+      gap: 8px;
+    }
+    .control-btn {
+      min-height: 42px;
+      border: 1px solid rgba(103, 232, 249, 0.42);
+      border-radius: 999px;
+      padding: 0 16px;
+      color: var(--text);
+      background: rgba(10, 15, 29, 0.86);
+      backdrop-filter: blur(12px);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+    .control-btn:hover, .control-btn.active {
+      color: var(--background);
+      background: var(--cyan);
+      box-shadow: 0 0 24px rgba(103, 232, 249, 0.35);
+    }
+
+    main { position: relative; z-index: 6; }
+    .section {
+      width: min(1180px, calc(100% - 40px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 120px 0;
+      display: flex;
+      align-items: center;
+    }
+    .content {
+      width: min(460px, 42%);
+      position: relative;
+    }
+    .align-right { margin-left: auto; }
+    .glass {
+      padding: 34px;
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--card-shadow);
+    }
+    .section-label {
+      margin: 0 0 12px;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(3.3rem, 8vw, 7.6rem);
+      line-height: 0.88;
+      letter-spacing: -0.07em;
+    }
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    p { line-height: 1.75; }
+    .hero-copy {
+      width: min(520px, 48%);
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+    .accent { color: var(--cyan); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--cyan);
+      border-radius: 4px;
+      padding: 0 18px;
+      color: var(--text);
+      background: transparent;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: 180ms ease;
+    }
+    .btn.primary { color: #061018; background: var(--cyan); }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(103, 232, 249, 0.16); }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 14px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.35; } }
+
+    .skills-list {
+      list-style: none;
+      margin: 20px 0 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .skills-list li {
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--text);
+      background: rgba(103, 232, 249, 0.04);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+    }
+
+    .projects-section { padding-top: 110px; }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .project-card {
+      min-height: 150px;
+      padding: 20px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(217, 70, 239, 0.55);
+      box-shadow: 0 14px 36px rgba(217, 70, 239, 0.09);
+    }
+    .project-card h3 { margin: 0 0 8px; font-size: 1rem; }
+    .project-card p { margin: 0 0 12px; color: var(--muted); font-size: 0.88rem; }
+    .project-tools { color: var(--magenta); font-family: var(--mono); font-size: 0.72rem; }
+
+    .contact-links { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+    .contact-links a {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--panel-border);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+    }
+    .contact-links a span:last-child { color: var(--cyan); }
+    .contact-links a:hover { color: var(--cyan); }
+
+    footer {
+      position: relative;
+      z-index: 8;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 24px 0 100px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.68rem; }
+      .content { width: min(400px, 46%); }
+      .glass { padding: 24px; }
+    }
+    @media (max-width: 700px) {
+      .site-header { height: 60px; }
+      .nav { width: calc(100% - 28px); }
+      .nav-links { display: none; }
+      .robot-canvas { inset: 60px 0 0 0; }
+      .section {
+        width: calc(100% - 28px);
+        min-height: 100svh;
+        padding: 84px 0 90px;
+        align-items: flex-end;
+      }
+      .hero-section { align-items: flex-start; padding-top: 88px; }
+      .content, .content.align-right {
+        width: 100%;
+        margin-left: 0;
+      }
+      h1 { font-size: clamp(3rem, 17vw, 5rem); }
+      .hero-copy { width: 82%; font-size: 0.94rem; }
+      .glass { max-width: 390px; margin-left: auto; }
+      #about .glass, #contact .glass { margin-left: 0; }
+      .projects-section .glass { max-width: 100%; }
+      .robot-controls { right: 14px; bottom: 14px; }
+      .control-btn { min-height: 38px; padding: 0 12px; font-size: 0.66rem; }
+      footer { width: calc(100% - 28px); }
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --background: #edf5f4;
+        --panel: rgba(245, 251, 250, 0.82);
+        --panel-border: rgba(0, 126, 145, 0.22);
+        --text: #10202a;
+        --muted: #526b78;
+        --card-shadow: 0 18px 50px rgba(27, 71, 79, 0.12);
+      }
+      .site-header { background: rgba(237, 245, 244, 0.82); }
+      .control-btn { background: rgba(245, 251, 250, 0.92); }
+      .project-card { background: rgba(255, 255, 255, 0.48); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- ============ NAVIGATION ============ -->
   <header class="site-header">
-    <nav class="nav container">
-      <a href="#" class="nav-logo">YN</a>
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+    <nav class="nav" aria-label="Main navigation">
+      <a class="nav-brand" href="#hero"><span>SN</span> // portfolio</a>
+      <div class="nav-links">
+        <a href="#about">01 About</a>
+        <a href="#skills">02 Skills</a>
+        <a href="#projects">03 Projects</a>
+        <a href="#contact">04 Contact</a>
+      </div>
     </nav>
   </header>
 
+  <div class="robot-canvas" id="robot-canvas" aria-label="Interactive 3D robot"></div>
+  <div class="robot-controls" aria-label="Robot controls">
+    <button class="control-btn" id="auto-spin" type="button">Auto-spin</button>
+    <button class="control-btn" id="wave" type="button">Wave</button>
+  </div>
+
   <main>
-
-    <!-- ============ HERO ============ -->
-    <section class="hero container">
-      <p class="hero-greeting">Hi, I'm</p>
-      <!-- TODO: Put your name here -->
-      <h1 class="hero-name">Your Name</h1>
-      <!-- TODO: One line about who you are -->
-      <p class="hero-tagline">Student developer who likes building things on the web.</p>
-      <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary">See my work</a>
-        <a href="#contact" class="btn btn-outline">Get in touch</a>
-      </div>
-    </section>
-
-    <!-- ============ ABOUT ============ -->
-    <section id="about" class="section container">
-      <h2 class="section-title">About Me</h2>
-      <div class="about-grid">
-        <!-- TODO: Replace with your own photo in assets/images/ -->
-        <img src="assets/images/profile-placeholder.svg" alt="Photo of Your Name" class="about-photo" />
-        <div>
-          <!-- TODO: Write 2–3 short paragraphs about yourself -->
-          <p>
-            I'm a student at <strong>Your School</strong> studying <strong>Your Course</strong>.
-            Write a few sentences here about what you're into, what you're learning,
-            and what kind of work you want to do.
-          </p>
-          <p>
-            Outside of class, I enjoy <em>hobby one</em>, <em>hobby two</em>, and <em>hobby three</em>.
-          </p>
+    <section class="section hero-section reveal" id="hero">
+      <div>
+        <p class="section-label">// system.online</p>
+        <h1>Sofia<br><span class="accent">Nabilah.</span></h1>
+        <p class="hero-copy">ICT student focused on frontend development, data analytics, and fintech solutions.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#projects">View projects</a>
+          <a class="btn" href="#contact">Contact</a>
         </div>
+        <div class="status"><span class="status-dot"></span> Available for internship or freelance work</div>
       </div>
     </section>
 
-    <!-- ============ SKILLS ============ -->
-    <section id="skills" class="section container">
-      <h2 class="section-title">Skills</h2>
-      <!-- TODO: List your real skills -->
-      <ul class="skills-list">
-        <li>HTML</li>
-        <li>CSS</li>
-        <li>JavaScript</li>
-        <li>Python</li>
-        <li>Git &amp; GitHub</li>
-        <li>Teamwork</li>
-      </ul>
+    <section class="section reveal" id="about">
+      <article class="content glass">
+        <p class="section-label">// 01 About</p>
+        <h2>Building useful digital systems.</h2>
+        <p>I am Sofia Nabilah, an ICT student interested in creating clear interfaces, analysing data, and exploring practical fintech applications. I am looking for internship or freelance opportunities where I can contribute, learn, and build meaningful products.</p>
+      </article>
     </section>
 
-    <!-- ============ PROJECTS ============ -->
-    <section id="projects" class="section container">
-      <h2 class="section-title">Projects</h2>
-      <div class="projects-grid">
-
-        <!-- TODO: Copy this card for each project you want to show -->
-        <article class="project-card">
-          <h3>Project One</h3>
-          <p>A short description of what this project does and what you learned building it.</p>
-          <ul class="project-tags">
-            <li>HTML</li><li>CSS</li>
-          </ul>
-          <a href="#" class="project-link">View project →</a>
-        </article>
-
-        <article class="project-card">
-          <h3>Project Two</h3>
-          <p>A short description of what this project does and what you learned building it.</p>
-          <ul class="project-tags">
-            <li>Python</li>
-          </ul>
-          <a href="#" class="project-link">View project →</a>
-        </article>
-
-        <article class="project-card">
-          <h3>Project Three</h3>
-          <p>A short description of what this project does and what you learned building it.</p>
-          <ul class="project-tags">
-            <li>JavaScript</li>
-          </ul>
-          <a href="#" class="project-link">View project →</a>
-        </article>
-
-      </div>
+    <section class="section reveal" id="skills">
+      <article class="content align-right glass">
+        <p class="section-label">// 02 Skills</p>
+        <h2>Core stack.</h2>
+        <ul class="skills-list">
+          <li>Python</li>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>C++</li>
+          <li>Frontend development</li>
+          <li>Data analytics</li>
+          <li>Fintech fundamentals</li>
+          <li>Git & GitHub</li>
+        </ul>
+      </article>
     </section>
 
-    <!-- ============ CONTACT ============ -->
-    <section id="contact" class="section container">
-      <h2 class="section-title">Contact</h2>
-      <p>Want to work together or just say hi? Find me here:</p>
-      <!-- TODO: Put in your real links (delete any you don't use) -->
-      <ul class="contact-links">
-        <li><a href="mailto:you@example.com">Email</a></li>
-        <li><a href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://linkedin.com/in/your-username" target="_blank" rel="noopener">LinkedIn</a></li>
-      </ul>
+    <section class="section projects-section reveal" id="projects">
+      <article class="content align-right glass">
+        <p class="section-label">// 03 Projects</p>
+        <h2>Selected builds.</h2>
+        <div class="projects-grid">
+          <article class="project-card">
+            <h3>HTML Calculator</h3>
+            <p>Problem: demonstrate basic arithmetic through a simple interface. Solution: a browser calculator with clear controls. Result: working HTML, CSS, and JavaScript experience.</p>
+            <div class="project-tools">HTML / CSS / JavaScript</div>
+          </article>
+          <article class="project-card">
+            <h3>Productivity App</h3>
+            <p>Problem: organize everyday tasks efficiently. Solution: a lightweight task app with a simple, accessible workflow and responsive interface.</p>
+            <div class="project-tools">HTML / CSS / JavaScript</div>
+          </article>
+          <article class="project-card">
+            <h3>Python School Projects</h3>
+            <p>Problem: practice programming concepts through practical assignments. Solution: multiple Python programs covering logic, data, and problem solving.</p>
+            <div class="project-tools">Python / Problem solving / Git</div>
+          </article>
+        </div>
+      </article>
     </section>
 
+    <section class="section reveal" id="contact">
+      <article class="content glass">
+        <p class="section-label">// 04 Contact</p>
+        <h2>Start a connection.</h2>
+        <p>Open to internship and freelance opportunities in frontend development, data analytics, or fintech.</p>
+        <div class="contact-links">
+          <a href="mailto:s3105ss.fiaa@gmail.com"><span>Email</span><span>s3105ss.fiaa@gmail.com</span></a>
+          <a href="https://github.com/fiaaa-jpg/vibe-code-portfolio-starter.git" target="_blank" rel="noopener"><span>GitHub</span><span>Open ↗</span></a>
+          <a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener"><span>LinkedIn</span><span>Open ↗</span></a>
+        </div>
+      </article>
+    </section>
   </main>
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="site-footer">
-    <p>© <span id="year"></span> Your Name. Built during the Vibe Code Your Portfolio workshop.</p>
-  </footer>
+  <footer>© <span id="year"></span> Sofia Nabilah // ICT Portfolio</footer>
 
-  <script src="js/main.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+
+    if (!window.THREE) {
+      document.getElementById("robot-canvas").textContent = "3D module unavailable";
+    } else {
+      const canvasHost = document.getElementById("robot-canvas");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      camera.position.set(0, 0.4, 12);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      canvasHost.appendChild(renderer.domElement);
+
+      const robot = new THREE.Group();
+      scene.add(robot);
+
+      const metal = new THREE.MeshStandardMaterial({ color: 0xb6c4d0, metalness: 0.75, roughness: 0.28 });
+      const darkMetal = new THREE.MeshStandardMaterial({ color: 0x182436, metalness: 0.72, roughness: 0.3 });
+      const cyan = new THREE.MeshStandardMaterial({
+        color: 0x67e8f9, emissive: 0x1ccbe0, emissiveIntensity: 2.2, metalness: 0.2, roughness: 0.24
+      });
+      const magenta = new THREE.MeshStandardMaterial({
+        color: 0xd946ef, emissive: 0xd946ef, emissiveIntensity: 1.7, metalness: 0.2, roughness: 0.25
+      });
+      const black = new THREE.MeshStandardMaterial({ color: 0x080b12, metalness: 0.6, roughness: 0.2 });
+
+      function mesh(geometry, material, position, rotation) {
+        const part = new THREE.Mesh(geometry, material);
+        if (position) part.position.set(position[0], position[1], position[2]);
+        if (rotation) part.rotation.set(rotation[0], rotation[1], rotation[2]);
+        part.castShadow = true;
+        return part;
+      }
+
+      // Head
+      const head = new THREE.Group();
+      head.position.y = 2.75;
+      head.add(mesh(new THREE.BoxGeometry(2.45, 1.7, 1.72), metal, [0, 0, 0]));
+      head.add(mesh(new THREE.BoxGeometry(2.15, 0.58, 0.18), black, [0, 0.05, 0.88]));
+      head.add(mesh(new THREE.BoxGeometry(0.62, 0.16, 0.08), cyan, [-0.5, 0.05, 1.0]));
+      head.add(mesh(new THREE.BoxGeometry(0.62, 0.16, 0.08), cyan, [0.5, 0.05, 1.0]));
+      head.add(mesh(new THREE.SphereGeometry(0.04, 8, 8), magenta, [-0.5, 0.05, 1.06]));
+      head.add(mesh(new THREE.SphereGeometry(0.04, 8, 8), magenta, [0.5, 0.05, 1.06]));
+      robot.add(head);
+
+      // Torso
+      const torso = new THREE.Group();
+      torso.position.y = 0.55;
+      torso.add(mesh(new THREE.CylinderGeometry(1.35, 1.55, 3.15, 8), metal));
+      torso.add(mesh(new THREE.CylinderGeometry(1.08, 1.08, 0.12, 32), darkMetal, [0, 0.2, 1.22], [Math.PI / 2, 0, 0]));
+      torso.add(mesh(new THREE.TorusGeometry(0.66, 0.09, 12, 32), cyan, [0, 0.2, 1.38]));
+      torso.add(mesh(new THREE.SphereGeometry(0.31, 24, 24), magenta, [0, 0.2, 1.48]));
+      torso.add(mesh(new THREE.BoxGeometry(0.7, 0.08, 0.12), cyan, [0, -0.8, 1.3]));
+      robot.add(torso);
+
+      // Arms
+      const leftArm = new THREE.Group();
+      leftArm.position.set(-1.7, 1.4, 0);
+      leftArm.add(mesh(new THREE.CylinderGeometry(0.38, 0.48, 1.8, 12), metal, [0, -0.65, 0], [0, 0, 0.12]));
+      leftArm.add(mesh(new THREE.SphereGeometry(0.47, 16, 16), darkMetal, [0, -1.55, 0]));
+      robot.add(leftArm);
+
+      const rightArm = new THREE.Group();
+      rightArm.position.set(1.7, 1.4, 0);
+      rightArm.add(mesh(new THREE.CylinderGeometry(0.38, 0.48, 1.8, 12), metal, [0, -0.65, 0], [0, 0, -0.12]));
+      rightArm.add(mesh(new THREE.SphereGeometry(0.47, 16, 16), darkMetal, [0, -1.55, 0]));
+      robot.add(rightArm);
+
+      // Legs
+      [-0.75, 0.75].forEach((x) => {
+        const leg = new THREE.Group();
+        leg.position.set(x, -1.15, 0);
+        leg.add(mesh(new THREE.CylinderGeometry(0.48, 0.52, 2.0, 12), darkMetal, [0, -0.75, 0]));
+        leg.add(mesh(new THREE.BoxGeometry(1.05, 0.42, 1.55), metal, [0, -1.9, 0.25]));
+        leg.add(mesh(new THREE.BoxGeometry(0.62, 0.08, 0.18), cyan, [0, -1.68, 1.04]));
+        robot.add(leg);
+      });
+
+      // Antenna
+      const antenna = new THREE.Group();
+      antenna.position.set(0, 3.7, 0);
+      antenna.add(mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.75, 8), metal));
+      antenna.add(mesh(new THREE.SphereGeometry(0.13, 16, 16), magenta, [0, 0.48, 0]));
+      robot.add(antenna);
+
+      // Orbit rings
+      const ringA = new THREE.Mesh(new THREE.TorusGeometry(3.05, 0.035, 6, 96), cyan);
+      ringA.rotation.set(Math.PI / 2.2, 0.25, 0);
+      scene.add(ringA);
+      const ringB = new THREE.Mesh(new THREE.TorusGeometry(2.55, 0.028, 6, 96), magenta);
+      ringB.rotation.set(Math.PI / 1.9, 0.7, 0.2);
+      scene.add(ringB);
+
+      // Neon floor grid
+      const grid = new THREE.GridHelper(24, 24, 0x67e8f9, 0x21404a);
+      grid.position.y = -3.8;
+      grid.position.z = -1;
+      grid.material.transparent = true;
+      grid.material.opacity = 0.42;
+      scene.add(grid);
+
+      // Floating particles
+      const particleCount = 180;
+      const particlePositions = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        particlePositions[i] = (Math.random() - 0.5) * 18;
+        particlePositions[i + 1] = (Math.random() - 0.5) * 12;
+        particlePositions[i + 2] = (Math.random() - 0.5) * 8;
+      }
+      const particleGeometry = new THREE.BufferGeometry();
+      particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+      const particleMaterial = new THREE.PointsMaterial({ color: 0x67e8f9, size: 0.018, transparent: true, opacity: 0.65 });
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particles);
+
+      scene.add(new THREE.AmbientLight(0x9ab0c8, 1.2));
+      const keyLight = new THREE.PointLight(0x67e8f9, 2.2, 30);
+      keyLight.position.set(5, 7, 6);
+      scene.add(keyLight);
+      const rimLight = new THREE.PointLight(0xd946ef, 1.8, 24);
+      rimLight.position.set(-6, 1, 4);
+      scene.add(rimLight);
+
+      let autoSpin = false;
+      let targetRotation = 0;
+      let rotation = 0;
+      let velocity = 0;
+      let dragging = false;
+      let lastX = 0;
+      let waveActive = false;
+      let waveTime = 0;
+      let blinking = false;
+
+      const autoButton = document.getElementById("auto-spin");
+      const waveButton = document.getElementById("wave");
+
+      autoButton.addEventListener("click", () => {
+        autoSpin = !autoSpin;
+        autoButton.classList.toggle("active", autoSpin);
+        autoButton.setAttribute("aria-pressed", String(autoSpin));
+      });
+
+      waveButton.addEventListener("click", () => {
+        if (!waveActive) {
+          waveActive = true;
+          waveTime = 0;
+          waveButton.classList.add("active");
+        }
+      });
+
+      function pointerDown(event) {
+        dragging = true;
+        lastX = event.clientX;
+        canvasHost.setPointerCapture?.(event.pointerId);
+      }
+      function pointerMove(event) {
+        if (!dragging) return;
+        const delta = event.clientX - lastX;
+        lastX = event.clientX;
+        velocity = delta * 0.008;
+        targetRotation += delta * 0.008;
+      }
+      function pointerUp() { dragging = false; }
+      canvasHost.addEventListener("pointerdown", pointerDown);
+      canvasHost.addEventListener("pointermove", pointerMove);
+      canvasHost.addEventListener("pointerup", pointerUp);
+      canvasHost.addEventListener("pointercancel", pointerUp);
+
+      function updateScrollRotation() {
+        const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        const progress = window.scrollY / scrollable;
+        if (!dragging && !autoSpin) targetRotation = progress * Math.PI * 2;
+      }
+      window.addEventListener("scroll", updateScrollRotation, { passive: true });
+
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+
+        if (!dragging && !autoSpin) {
+          targetRotation += velocity;
+          velocity *= 0.94;
+        }
+        if (autoSpin) targetRotation += 0.012;
+        rotation += (targetRotation - rotation) * 0.08;
+        robot.rotation.y = rotation;
+
+        robot.position.y = Math.sin(elapsed * 1.25) * 0.16;
+        ringA.rotation.z = elapsed * 0.18;
+        ringB.rotation.z = -elapsed * 0.24;
+        particles.rotation.y = elapsed * 0.025;
+
+        // Head tracks the pointer
+        const mouseX = ((window.mouseX || window.innerWidth / 2) / window.innerWidth - 0.5) * 0.32;
+        const mouseY = ((window.mouseY || window.innerHeight / 2) / window.innerHeight - 0.5) * 0.18;
+        head.rotation.y += (mouseX - head.rotation.y) * 0.035;
+        head.rotation.x += (-mouseY - head.rotation.x) * 0.035;
+
+        // Blink eyes periodically
+        if (!blinking && Math.random() < 0.004) blinking = true;
+        const eyeScale = blinking ? 0.08 : 1;
+        head.children[2].scale.y += (eyeScale - head.children[2].scale.y) * 0.4;
+        head.children[3].scale.y += (eyeScale - head.children[3].scale.y) * 0.4;
+        if (blinking && Math.random() < 0.04) blinking = false;
+
+        if (waveActive) {
+          waveTime += 0.08;
+          rightArm.rotation.z = Math.sin(waveTime * 2.2) * 0.55 + 2.3;
+          rightArm.rotation.x = -0.2;
+          if (waveTime > Math.PI * 3.4) {
+            waveActive = false;
+            waveButton.classList.remove("active");
+            rightArm.rotation.set(0, 0, 0);
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener("mousemove", (event) => {
+        window.mouseX = event.clientX;
+        window.mouseY = event.clientY;
+      });
+
+      function resize() {
+        const width = canvasHost.clientWidth;
+        const height = canvasHost.clientHeight;
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.position.z = window.innerWidth < 700 ? 14.8 : 12;
+        camera.updateProjectionMatrix();
+      }
+      window.addEventListener("resize", resize);
+      resize();
+      updateScrollRotation();
+      animate();
+    }
+  </script>
 </body>
 </html>
